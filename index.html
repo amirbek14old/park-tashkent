@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Parkly – Smart Parking Tashkent</title>
+<style>
+:root{--bg:#f4f6f8;--card:#fff;--tx:#14202b;--mu:#64748b;--bd:#e1e7ee;--ac:#2563eb;--g:#16a34a;--r:#dc2626;--y:#eab308;--map:#e8edf1;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e141b;--card:#16202a;--tx:#e6edf4;--mu:#93a4b5;--bd:#25323f;--ac:#60a5fa;--map:#101a23}}
+:root[data-theme="dark"]{--bg:#0e141b;--card:#16202a;--tx:#e6edf4;--mu:#93a4b5;--bd:#25323f;--ac:#60a5fa;--map:#101a23}
+*{box-sizing:border-box}html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--tx);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:14px;line-height:1.4}
+#root{height:100%}.app{display:grid;grid-template-columns:390px 1fr;height:100%}
+.side{overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:11px;background:var(--bg);border-right:1px solid var(--bd)}
+.mapc{position:relative;background:var(--map)}.map{position:absolute;inset:0}
+@media(max-width:820px){.app{display:flex;flex-direction:column;height:auto}.mapc{order:1;height:52vh;flex:none}.side{order:2;overflow:visible;border:0}}
+.hd{display:flex;align-items:center;gap:10px}.hd b{font-size:19px;display:block}.hd small{color:var(--mu)}.hd>div:nth-child(2){flex:1}
+.logo{width:36px;height:36px;border-radius:10px;background:var(--ac);color:#fff;display:grid;place-items:center;font-weight:800;font-size:20px}
+.ic{border:1px solid var(--bd);background:var(--card);border-radius:10px;width:36px;height:36px;cursor:pointer;font-size:16px}
+.warn{background:#fef9c3;color:#713f12;border:1px solid #fde68a;border-radius:10px;padding:8px 10px;font-size:12.5px}
+:root[data-theme="dark"] .warn{background:#3a3010;color:#fde68a;border-color:#5b4a14}
+.st{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+.sc{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:8px;text-align:center;transition:transform .2s}
+.sc b{display:block;font-size:20px;transition:color .3s}.sc small{color:var(--mu);font-size:11px}
+.pb{display:flex;height:8px;border-radius:99px;overflow:hidden;background:var(--bd)}.pb i{display:block;transition:width .6s ease}
+.src{display:flex;gap:6px;flex-wrap:wrap;font-size:11.5px;color:var(--mu)}.src span{background:var(--card);border:1px solid var(--bd);border-radius:99px;padding:2px 9px}
+input{font:inherit;color:var(--tx);background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:10px 12px;width:100%}
+.row{display:flex;gap:6px;flex-wrap:wrap}
+.chip,.btn{font:inherit;font-size:13px;border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:99px;padding:6px 12px;cursor:pointer;transition:all .15s}
+.chip.on{background:var(--ac);border-color:var(--ac);color:#fff}
+.btn{border-radius:10px;font-weight:600}.btn.p{background:var(--ac);color:#fff;border-color:var(--ac)}
+.btn.g{color:var(--g);border-color:var(--g)}.btn.r{color:var(--r);border-color:var(--r)}.btn:disabled{opacity:.5}
+.msg{font-size:12.5px;color:var(--ac)}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:12px;animation:fd .25s ease}
+@keyframes fd{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.card h3{margin:0 0 6px;font-size:15px}.kv{display:grid;grid-template-columns:auto 1fr;gap:3px 10px;margin:8px 0;font-size:13px}.kv span:nth-child(odd){color:var(--mu)}
+.pill{display:inline-block;border-radius:99px;padding:2px 10px;font-size:12px;font-weight:700;color:#fff}
+.pill.free{background:var(--g)}.pill.occupied{background:var(--r)}.pill.unconfirmed{background:var(--y);color:#3a2f00}
+.dot{width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:6px}
+.li{display:flex;align-items:center;gap:10px;padding:9px 11px;background:var(--card);border:1px solid var(--bd);border-radius:12px;cursor:pointer;transition:transform .15s,border-color .15s}
+.li:hover{transform:translateX(2px);border-color:var(--ac)}.li div{flex:1;min-width:0}.li b{display:block}.li small{color:var(--mu)}
+.cnt{font-weight:800;font-size:15px}.tag{font-size:11px;border:1px solid var(--bd);border-radius:6px;padding:0 5px;color:var(--mu);margin-left:4px}
+h4{margin:6px 0 0;font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--mu)}
+.rc{font-size:12.5px;display:flex;align-items:center;gap:6px;padding:3px 0}.rc span:last-child{margin-left:auto;color:var(--mu)}
+.dist{fill:var(--ac);fill-opacity:.08;stroke:var(--mu);stroke-width:1.2;stroke-opacity:.8}.leaflet-tooltip{position:absolute;white-space:nowrap;pointer-events:none;background:none;border:0;box-shadow:none;color:var(--mu);font-size:11px;font-weight:600;padding:0;display:none}.zfar .leaflet-tooltip{display:block}.leaflet-tooltip-pane{z-index:650}
+a.btn{text-decoration:none;display:inline-block}a.tag{color:var(--ac);text-decoration:none}
+.lotsvg{width:100%;height:auto;margin:6px 0;display:block}.pic{width:100%;border-radius:10px;margin-top:6px;display:block}
+.foot{font-size:11.5px;color:var(--mu)}
+.tilewarn{position:absolute;left:10px;right:10px;bottom:28px;z-index:900;background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:8px 10px;font-size:12px;color:var(--mu)}
+.lotpin{width:34px;height:34px;border-radius:50% 50% 50% 4px;transform:rotate(-45deg);display:grid;place-items:center;color:#fff;font-weight:800;border:2px solid #fff;box-shadow:0 2px 6px #0005}
+.lotpin span{transform:rotate(45deg)}
+[data-theme="dark"] .leaflet-tile-pane{filter:invert(1) hue-rotate(180deg) brightness(.92) contrast(.9)}
+.leaflet-pane,.leaflet-tile,.leaflet-marker-icon,.leaflet-tile-container,.leaflet-pane>svg,.leaflet-pane>canvas,.leaflet-zoom-box,.leaflet-layer{position:absolute;left:0;top:0}
+.leaflet-container{overflow:hidden;position:relative;outline:0}.leaflet-tile,.leaflet-marker-icon{user-select:none;-webkit-user-drag:none}
+.leaflet-tile{visibility:hidden}.leaflet-tile-loaded{visibility:inherit}.leaflet-zoom-animated{transform-origin:0 0}
+.leaflet-zoom-anim .leaflet-zoom-animated{transition:transform .25s cubic-bezier(0,0,.25,1)}
+.leaflet-tile-pane{z-index:200}.leaflet-overlay-pane{z-index:400}.leaflet-marker-pane{z-index:600}.leaflet-map-pane{z-index:1}
+.leaflet-control{position:relative;z-index:800;pointer-events:auto;margin:10px;float:left;clear:both}
+.leaflet-top,.leaflet-bottom{position:absolute;z-index:1000;pointer-events:none}.leaflet-top{top:0}.leaflet-bottom{bottom:0}.leaflet-left{left:0}.leaflet-right{right:0}.leaflet-right .leaflet-control{float:right}
+.leaflet-control-zoom a{display:block;width:32px;height:32px;line-height:32px;text-align:center;background:var(--card);color:var(--tx);text-decoration:none;border:1px solid var(--bd);font-size:18px}
+.leaflet-control-attribution{background:#fffc;color:#333;font-size:11px;padding:0 5px;margin:0}.leaflet-control-attribution a{color:#0b5fbf}
+.leaflet-interactive{cursor:pointer}.leaflet-container .leaflet-overlay-pane svg{max-width:none!important}
+</style></head><body><div id="root"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+<script>
+const {useState,useEffect,useRef}=React,h=React.createElement;
+const COL={free:"#16a34a",occupied:"#dc2626",unconfirmed:"#eab308"},LBL={free:"Available",occupied:"Occupied",unconfirmed:"Unconfirmed"};
+const STALE=6e5;
+// Locations are approximate and for demonstration only.
+const LOTS=[
+{id:1,name:"Amir Temur Square",cat:"street landmark",tags:["Amir Temur Avenue","city center"],lat:41.3111,lng:69.2797,isFree:false,n:14},
+{id:2,name:"Chorsu Bazaar",cat:"market",tags:["Chorsu","old city"],lat:41.3265,lng:69.2347,isFree:true,n:14},
+{id:3,name:"Magic City",cat:"shopping mall restaurant",tags:["Tashkent City"],lat:41.3085,lng:69.2440,isFree:true,n:16},
+{id:4,name:"Tashkent City Mall",cat:"shopping mall",tags:["Tashkent City"],lat:41.3135,lng:69.2515,isFree:false,n:14},
+{id:5,name:"National University of Uzbekistan",cat:"university",tags:["Olmazor"],lat:41.3455,lng:69.2105,isFree:true,n:12},
+{id:6,name:"Westminster International University",cat:"university",tags:["Istiqbol"],lat:41.3395,lng:69.2870,isFree:false,n:12},
+{id:7,name:"Demo Business Center",cat:"business center",tags:["Yunusobod"],lat:41.3640,lng:69.2870,isFree:false,n:12},
+{id:8,name:"Demo Restaurant Row",cat:"restaurant",tags:["Mirabad"],lat:41.2960,lng:69.2760,isFree:true,n:14},
+{id:9,name:"Demo Street Parking",cat:"street",tags:["Chilonzor"],lat:41.2755,lng:69.2040,isFree:true,n:12}];
+const LOT=Object.fromEntries(LOTS.map(l=>[l.id,l]));
+function seed(){let a=7;const r=()=>{a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296};
+const now=Date.now(),o=[];LOTS.forEach(l=>{for(let i=0;i<l.n;i++){const x=r();o.push({id:l.id+"-"+(i+1),lot:l.id,n:i+1,lat:l.lat+.0003-Math.floor(i/4)*.00016,lng:l.lng+(i%4)*.0002-.0003,status:x<.38?"free":x<.88?"occupied":"unconfirmed",updated:now-r()*84e4,source:"sim",conf:0,by:null})}});return o}
+const eff=(s,n)=>s.status==="unconfirmed"||n-s.updated>STALE?"unconfirmed":s.status;
+const dist=(a,b)=>{const R=6371e3,k=Math.PI/180,x=(b.lat-a.lat)*k,y=(b.lng-a.lng)*k,q=Math.sin(x/2)**2+Math.cos(a.lat*k)*Math.cos(b.lat*k)*Math.sin(y/2)**2;return 2*R*Math.asin(Math.sqrt(q))};
+const fd=d=>d<1000?Math.round(d)+" m":(d/1000).toFixed(1)+" km";
+const ago=(t,n)=>{const s=Math.max(0,Math.round((n-t)/1e3));return s<60?s+" s ago":Math.round(s/60)+" min ago"};
+const srcLbl=s=>s.source==="sensor"?"Sensor / camera":s.source==="user"?(s.conf>=2?"User report · verified":"User report · "+s.conf+"/2 confirmations"):"Simulated demo data";
+
+const DIST=[{"n":"Bektemir","r":[[[69.276,41.205],[69.287,41.215],[69.29,41.221],[69.298,41.225],[69.298,41.226],[69.308,41.23],[69.308,41.232],[69.312,41.233],[69.317,41.237],[69.324,41.238],[69.329,41.241],[69.331,41.238],[69.332,41.238],[69.338,41.244],[69.351,41.248],[69.356,41.252],[69.363,41.263],[69.367,41.268],[69.375,41.27],[69.379,41.274],[69.379,41.267],[69.382,41.268],[69.383,41.266],[69.386,41.265],[69.395,41.266],[69.397,41.265],[69.396,41.263],[69.386,41.256],[69.385,41.257],[69.382,41.255],[69.392,41.248],[69.393,41.245],[69.393,41.243],[69.354,41.217],[69.307,41.183],[69.297,41.19],[69.293,41.191],[69.288,41.194],[69.286,41.197],[69.276,41.205]]]},{"n":"Chilonzor","r":[[[69.149,41.261],[69.163,41.25],[69.167,41.24],[69.165,41.237],[69.169,41.235],[69.174,41.229],[69.174,41.227],[69.172,41.225],[69.174,41.223],[69.188,41.236],[69.215,41.253],[69.214,41.256],[69.218,41.262],[69.218,41.265],[69.226,41.276],[69.235,41.281],[69.235,41.286],[69.238,41.289],[69.238,41.292],[69.242,41.295],[69.242,41.297],[69.252,41.302],[69.255,41.306],[69.26,41.311],[69.241,41.312],[69.232,41.3],[69.223,41.302],[69.219,41.301],[69.202,41.301],[69.194,41.303],[69.195,41.281],[69.198,41.279],[69.196,41.277],[69.177,41.272],[69.172,41.269],[69.171,41.27],[69.168,41.268],[69.164,41.269],[69.158,41.264],[69.149,41.261]]]},{"n":"Mirobod","r":[[[69.261,41.267],[69.284,41.271],[69.287,41.27],[69.294,41.265],[69.297,41.265],[69.298,41.263],[69.303,41.262],[69.308,41.265],[69.311,41.261],[69.301,41.257],[69.302,41.253],[69.302,41.244],[69.313,41.244],[69.321,41.238],[69.324,41.238],[69.329,41.241],[69.304,41.286],[69.294,41.297],[69.293,41.297],[69.292,41.298],[69.292,41.3],[69.281,41.31],[69.271,41.312],[69.27,41.31],[69.268,41.311],[69.268,41.309],[69.269,41.309],[69.266,41.302],[69.269,41.295],[69.271,41.293],[69.269,41.291],[69.269,41.289],[69.266,41.287],[69.266,41.286],[69.265,41.284],[69.273,41.278],[69.266,41.27],[69.261,41.267]]]},{"n":"Mirzo Ulugbek","r":[[[69.28,41.312],[69.282,41.311],[69.292,41.308],[69.298,41.307],[69.298,41.31],[69.3,41.31],[69.302,41.313],[69.304,41.312],[69.308,41.313],[69.311,41.319],[69.321,41.315],[69.329,41.314],[69.341,41.306],[69.344,41.31],[69.355,41.316],[69.375,41.33],[69.381,41.337],[69.387,41.338],[69.397,41.338],[69.408,41.342],[69.41,41.344],[69.412,41.35],[69.411,41.356],[69.405,41.364],[69.402,41.363],[69.401,41.365],[69.399,41.366],[69.396,41.364],[69.391,41.366],[69.377,41.362],[69.373,41.362],[69.364,41.363],[69.358,41.357],[69.354,41.355],[69.343,41.356],[69.336,41.353],[69.334,41.351],[69.326,41.351],[69.325,41.348],[69.322,41.347],[69.319,41.343],[69.319,41.341],[69.316,41.339],[69.317,41.335],[69.316,41.333],[69.313,41.332],[69.311,41.337],[69.303,41.336],[69.3,41.333],[69.302,41.332],[69.296,41.329],[69.298,41.328],[69.298,41.326],[69.296,41.325],[69.295,41.326],[69.293,41.323],[69.292,41.323],[69.292,41.318],[69.286,41.318],[69.283,41.314],[69.281,41.315],[69.28,41.312]]]},{"n":"Olmazor","r":[[[69.165,41.348],[69.167,41.354],[69.174,41.362],[69.21,41.384],[69.212,41.387],[69.216,41.387],[69.228,41.395],[69.241,41.378],[69.261,41.363],[69.27,41.356],[69.261,41.348],[69.264,41.346],[69.26,41.34],[69.245,41.326],[69.241,41.326],[69.239,41.329],[69.236,41.329],[69.232,41.325],[69.218,41.333],[69.205,41.34],[69.207,41.345],[69.198,41.348],[69.187,41.35],[69.165,41.348]]]},{"n":"Sergeli","r":[[[69.195,41.241],[69.216,41.253],[69.234,41.262],[69.283,41.271],[69.286,41.271],[69.293,41.266],[69.297,41.265],[69.298,41.263],[69.303,41.262],[69.308,41.265],[69.311,41.261],[69.301,41.257],[69.302,41.253],[69.302,41.244],[69.221,41.243],[69.216,41.24],[69.214,41.237],[69.222,41.224],[69.224,41.225],[69.225,41.227],[69.231,41.233],[69.231,41.235],[69.242,41.235],[69.245,41.216],[69.262,41.222],[69.272,41.214],[69.276,41.216],[69.278,41.218],[69.283,41.218],[69.29,41.221],[69.287,41.215],[69.276,41.205],[69.261,41.198],[69.254,41.193],[69.248,41.199],[69.245,41.215],[69.22,41.205],[69.195,41.241]]]},{"n":"Shayxontohur","r":[[[69.16,41.328],[69.164,41.337],[69.165,41.348],[69.188,41.35],[69.206,41.345],[69.207,41.345],[69.205,41.34],[69.232,41.325],[69.236,41.329],[69.239,41.329],[69.241,41.326],[69.245,41.326],[69.261,41.341],[69.263,41.344],[69.275,41.337],[69.273,41.334],[69.273,41.33],[69.271,41.329],[69.271,41.326],[69.264,41.313],[69.26,41.311],[69.241,41.312],[69.232,41.3],[69.223,41.302],[69.219,41.301],[69.202,41.301],[69.194,41.303],[69.193,41.325],[69.194,41.327],[69.168,41.328],[69.168,41.331],[69.165,41.331],[69.16,41.328]]]},{"n":"Uchtepa","r":[[[69.122,41.265],[69.123,41.27],[69.125,41.27],[69.126,41.272],[69.128,41.274],[69.129,41.276],[69.132,41.279],[69.133,41.279],[69.133,41.28],[69.135,41.284],[69.132,41.288],[69.138,41.292],[69.138,41.295],[69.149,41.305],[69.149,41.308],[69.147,41.31],[69.148,41.312],[69.147,41.314],[69.148,41.314],[69.154,41.322],[69.154,41.325],[69.155,41.327],[69.157,41.327],[69.159,41.328],[69.16,41.328],[69.165,41.331],[69.168,41.331],[69.168,41.328],[69.194,41.327],[69.193,41.324],[69.195,41.281],[69.198,41.279],[69.194,41.275],[69.177,41.272],[69.172,41.269],[69.171,41.27],[69.168,41.268],[69.164,41.269],[69.158,41.264],[69.149,41.261],[69.147,41.265],[69.146,41.277],[69.148,41.281],[69.147,41.281],[69.141,41.278],[69.14,41.275],[69.131,41.269],[69.125,41.267],[69.123,41.267],[69.122,41.265]]]},{"n":"Yakkasaroy","r":[[[69.215,41.253],[69.235,41.262],[69.263,41.268],[69.273,41.278],[69.265,41.284],[69.266,41.286],[69.266,41.287],[69.269,41.289],[69.269,41.291],[69.271,41.293],[69.269,41.295],[69.266,41.302],[69.269,41.309],[69.26,41.311],[69.254,41.305],[69.252,41.302],[69.242,41.297],[69.242,41.295],[69.238,41.292],[69.237,41.287],[69.235,41.286],[69.235,41.281],[69.226,41.276],[69.218,41.265],[69.218,41.262],[69.214,41.256],[69.215,41.253]]]},{"n":"Yangihayot","r":[[[69.174,41.223],[69.188,41.236],[69.195,41.241],[69.22,41.205],[69.245,41.215],[69.248,41.199],[69.254,41.193],[69.261,41.198],[69.276,41.205],[69.286,41.197],[69.288,41.194],[69.293,41.191],[69.297,41.19],[69.307,41.183],[69.281,41.165],[69.274,41.163],[69.269,41.163],[69.247,41.166],[69.238,41.166],[69.231,41.167],[69.208,41.175],[69.199,41.181],[69.185,41.199],[69.186,41.205],[69.182,41.207],[69.185,41.212],[69.182,41.215],[69.184,41.217],[69.181,41.219],[69.18,41.218],[69.178,41.219],[69.176,41.218],[69.175,41.219],[69.175,41.221],[69.174,41.222],[69.174,41.223]]]},{"n":"Yashnobod","r":[[[69.281,41.31],[69.282,41.311],[69.294,41.307],[69.299,41.307],[69.298,41.31],[69.3,41.31],[69.302,41.313],[69.304,41.312],[69.308,41.313],[69.311,41.319],[69.321,41.315],[69.329,41.314],[69.341,41.306],[69.344,41.31],[69.355,41.316],[69.375,41.33],[69.381,41.337],[69.387,41.338],[69.397,41.338],[69.408,41.342],[69.461,41.346],[69.474,41.349],[69.477,41.347],[69.474,41.345],[69.468,41.335],[69.453,41.326],[69.449,41.321],[69.437,41.315],[69.434,41.312],[69.429,41.31],[69.424,41.304],[69.409,41.293],[69.389,41.276],[69.381,41.271],[69.381,41.268],[69.379,41.267],[69.379,41.274],[69.375,41.27],[69.37,41.268],[69.366,41.267],[69.354,41.25],[69.348,41.247],[69.338,41.244],[69.334,41.239],[69.331,41.238],[69.303,41.287],[69.294,41.297],[69.293,41.297],[69.292,41.298],[69.292,41.3],[69.281,41.31]]]},{"n":"Yunusobod","r":[[[69.228,41.395],[69.241,41.378],[69.261,41.363],[69.27,41.356],[69.261,41.348],[69.264,41.346],[69.263,41.344],[69.275,41.337],[69.273,41.334],[69.273,41.33],[69.271,41.329],[69.271,41.326],[69.264,41.314],[69.263,41.312],[69.261,41.312],[69.26,41.311],[69.268,41.309],[69.268,41.311],[69.27,41.31],[69.271,41.312],[69.281,41.31],[69.282,41.311],[69.28,41.313],[69.281,41.315],[69.283,41.314],[69.285,41.317],[69.292,41.318],[69.292,41.323],[69.293,41.323],[69.295,41.326],[69.296,41.325],[69.298,41.326],[69.298,41.328],[69.296,41.329],[69.302,41.332],[69.3,41.333],[69.303,41.336],[69.311,41.337],[69.313,41.332],[69.315,41.333],[69.317,41.335],[69.316,41.339],[69.319,41.341],[69.319,41.343],[69.322,41.347],[69.325,41.348],[69.326,41.351],[69.334,41.351],[69.336,41.353],[69.344,41.356],[69.325,41.37],[69.319,41.383],[69.317,41.384],[69.312,41.385],[69.285,41.384],[69.281,41.385],[69.264,41.396],[69.258,41.398],[69.236,41.398],[69.228,41.395]]]}];
+function MapView({lots,spots,sel,focus,pos,onSpot,onLot}){
+ const ref=useRef(),M=useRef({}),[z,setZ]=useState(13),[bad,setBad]=useState(false);
+ useEffect(()=>{const m=L.map(ref.current).fitBounds([[41.17,69.13],[41.40,69.47]]);
+  const t=L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:"© OpenStreetMap contributors · district outlines: akbartus/GeoJSON-Uzbekistan"}).addTo(m);
+  DIST.forEach(d=>L.polygon(d.r[0].map(p=>[p[1],p[0]]),{className:"dist",interactive:false}).addTo(m).bindTooltip(d.n,{permanent:true,direction:"center"}));t.on("tileerror",()=>setBad(true));t.on("tileload",()=>setBad(false));const zc=()=>{setZ(m.getZoom());m.getContainer().classList.toggle("zfar",m.getZoom()<15)};m.on("zoomend",zc);zc();
+  M.current={m,g:L.layerGroup().addTo(m)};return()=>m.remove()},[]);
+ useEffect(()=>{const{g}=M.current;g.clearLayers();
+  if(z<16)lots.forEach(l=>{const q=l.nf/l.n,c=q>.3?COL.free:q>.1?COL.unconfirmed:COL.occupied;
+   L.marker([l.lat,l.lng],{icon:L.divIcon({className:"",iconSize:[34,34],html:`<div class="lotpin" style="background:${c}"><span>${l.nf}</span></div>`})}).on("click",()=>onLot(l)).addTo(g)});
+  else spots.forEach(s=>L.circleMarker([s.lat,s.lng],{radius:z>=18?9:z>=17?6:4,color:s.id===sel?"#2563eb":"#fff",weight:s.id===sel?3:1.5,fillColor:COL[s.st],fillOpacity:1}).on("click",()=>onSpot(s.id)).addTo(g));
+  L.circleMarker([pos.lat,pos.lng],{radius:7,color:"#fff",weight:3,fillColor:"#2563eb",fillOpacity:1}).addTo(g)});
+ useEffect(()=>{if(focus)M.current.m.flyTo([focus.lat,focus.lng],focus.z)},[focus&&focus.k]);
+ return h("div",{className:"mapc"},h("div",{className:"map",ref}),bad&&h("div",{className:"tilewarn"},"Street-level OpenStreetMap tiles can’t load in this hosted preview, so you see Tashkent’s district outlines instead. Run the project on your own server to get the full street map."));
+}
+
+function LotView({lot,spots,sel,onPick}){
+ const R=Math.ceil(spots.length/4),W=290,H=R*92+20;
+ return h("svg",{viewBox:`0 0 ${W} ${H}`,className:"lotsvg",role:"img","aria-label":"Top-down plan of "+lot.name+" parking"},
+  h("rect",{x:0,y:0,width:W,height:H,rx:12,fill:"var(--map)"}),
+  spots.slice().sort((a,b)=>a.n-b.n).map(s=>{const i=s.n-1,x=10+(i%4)*70,y=10+Math.floor(i/4)*92,c=COL[s.st],on=s.id===sel;
+   return h("g",{key:s.id,onClick:()=>onPick(s.id),style:{cursor:"pointer"}},
+    h("rect",{x:x+2,y:y+2,width:62,height:80,rx:6,fill:"var(--card)",stroke:on?"#2563eb":c,strokeWidth:on?4:2,strokeDasharray:s.st==="unconfirmed"?"5 3":null}),
+    s.st==="occupied"?h("g",null,h("rect",{x:x+13,y:y+10,width:40,height:60,rx:11,fill:"#dc2626"}),h("rect",{x:x+18,y:y+22,width:30,height:12,rx:3,fill:"#fecaca"}),h("rect",{x:x+18,y:y+52,width:30,height:8,rx:3,fill:"#7f1d1d"})):h("text",{x:x+33,y:y+52,textAnchor:"middle",fontSize:26,fontWeight:800,fill:c},s.st==="free"?"P":"?"),
+    h("text",{x:x+33,y:y+76,textAnchor:"middle",fontSize:11,fill:"var(--mu)"},"#"+s.n),
+    on&&h("g",null,h("circle",{cx:x+54,cy:y+14,r:9,fill:"#2563eb"}),h("text",{x:x+54,y:y+18,textAnchor:"middle",fontSize:11,fontWeight:800,fill:"#fff"},"★")))}));
+}
+function App(){
+ const [spots,setSpots]=useState(seed),[now,setNow]=useState(Date.now()),[theme,setTheme]=useState(matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light");
+ const [q,setQ]=useState(""),[av,setAv]=useState(false),[price,setPrice]=useState("all"),[cl,setCl]=useState(false),[sel,setSel]=useState(null),[focus,setFocus]=useState(null);
+ const [pos,setPos]=useState({lat:41.3111,lng:69.2797,demo:true}),[msg,setMsg]=useState(""),last=useRef({}),[photos,setPhotos]=useState(()=>{try{return JSON.parse(localStorage.getItem("parkly-photos")||"{}")}catch(e){return{}}});
+ useEffect(()=>{document.documentElement.dataset.theme=theme},[theme]);
+ // Future integration point: window.parklyIngest({id:"3-7",status:"occupied",source:"sensor",ts:Date.now()})
+ useEffect(()=>{window.parklyIngest=r=>setSpots(p=>p.map(s=>s.id===r.id?{...s,status:r.status,updated:r.ts||Date.now(),source:r.source||"sensor"}:s))},[]);
+ useEffect(()=>{const t=setInterval(()=>{const n=Date.now();setNow(n);setSpots(p=>{const c=p.slice();for(let i=0;i<2;i++){const k=Math.floor(Math.random()*c.length),s=c[k];if(s.source==="user")continue;c[k]={...s,status:eff(s,n)==="free"?"occupied":"free",updated:n,source:"sim"}}return c})},3000);return()=>clearInterval(t)},[]);
+ const E=spots.map(s=>({...s,st:eff(s,now),d:dist(pos,s)}));
+ const tot=E.length,cf=E.filter(s=>s.st==="free").length,co=E.filter(s=>s.st==="occupied").length,cu=tot-cf-co,pc=(cf/tot*100).toFixed(1);
+ const bySrc=k=>E.filter(s=>s.source===k).length;
+ const lots=LOTS.map(l=>({...l,nf:E.filter(s=>s.lot===l.id&&s.st==="free").length,d:dist(pos,l)}))
+  .filter(l=>(price==="all"||(price==="free")===l.isFree)&&(!q||(l.name+" "+l.cat+" "+l.tags.join(" ")).toLowerCase().includes(q.toLowerCase()))&&(!av||l.nf>0))
+  .sort((a,b)=>cl?a.d-b.d:b.nf-a.nf);
+ const ids=new Set(lots.map(l=>l.id)),vs=E.filter(s=>ids.has(s.lot)&&(!av||s.st==="free"));
+ const S=E.find(s=>s.id===sel),pk=S&&(photos[S.id]?S.id:Object.keys(photos).find(k=>k.startsWith(S.lot+"-")));
+ const fly=(o,z)=>setFocus({lat:o.lat,lng:o.lng,z,k:Date.now()});
+ const locate=()=>navigator.geolocation?navigator.geolocation.getCurrentPosition(p=>{const o={lat:p.coords.latitude,lng:p.coords.longitude,demo:false};setPos(o);fly(o,16);setMsg("")},()=>setMsg("Location unavailable, using the demo location (Amir Temur Square)."),{timeout:8000}):setMsg("Location isn’t supported on this device.");
+ const nearest=()=>{const f=E.filter(s=>s.st==="free").sort((a,b)=>a.d-b.d)[0];if(f){setSel(f.id);fly(f,18)}};
+ const upd=(id,fn)=>setSpots(p=>p.map(s=>s.id===id?fn(s):s));
+ const gate=id=>{const n=Date.now();if(n-(last.current[id]||0)<3e4){setMsg("Please wait 30 s before updating this spot again.");return false}last.current[id]=n;return true};
+ const report=(id,status)=>{if(!gate(id))return;upd(id,s=>({...s,status,updated:Date.now(),source:"user",conf:1,by:"me"}));setMsg("Report saved. One more driver must confirm it before it counts as verified.")};
+ const confirm=s=>{if(s.st==="unconfirmed"){setMsg("Tell us what you see: report it as available or occupied.");return}
+  if(s.source==="user"&&s.by==="me"&&s.conf<2){setMsg("You can’t verify your own report. Another driver must confirm it.");return}
+  if(!gate(s.id))return;upd(s.id,x=>({...x,updated:Date.now(),source:"user",conf:x.source==="user"?Math.min(2,x.conf+1):1,by:x.source==="user"?x.by:"me"}));setMsg("Thanks, status confirmed.")};
+ const other=s=>upd(s.id,x=>({...x,conf:2,updated:Date.now()}));
+ const goMaps=o=>{const w=window.open("https://www.google.com/maps/search/?api=1&query="+o.lat+","+o.lng,"_blank");if(w){w.opener=null;setMsg("Opened in Google Maps (new tab). Come back here for the plan and photo.")}else setMsg("Your browser blocked the Google Maps tab. Use the Directions button instead.")};
+ const pickLot=l=>{const c=E.filter(s=>s.lot===l.id).sort((a,b)=>(a.st==="free"?0:1)-(b.st==="free"?0:1)||a.d-b.d)[0];setSel(c.id);fly(l,17);goMaps(l)};
+ const addPhoto=(id,f)=>{if(!f)return;const fr=new FileReader();fr.onload=()=>{const im=new Image();im.onload=()=>{const k=Math.min(1,640/Math.max(im.width,im.height)),c=document.createElement("canvas");c.width=im.width*k;c.height=im.height*k;c.getContext("2d").drawImage(im,0,0,c.width,c.height);const d=c.toDataURL("image/jpeg",.7);setPhotos(p=>{const n={...p,[id]:d};try{localStorage.setItem("parkly-photos",JSON.stringify(n))}catch(e){setMsg("Photo added, but it may not be kept after you close the page.")}return n})};im.onerror=()=>setMsg("That file couldn’t be read as an image.");im.src=fr.result};fr.readAsDataURL(f)};
+ const recent=E.slice().sort((a,b)=>b.updated-a.updated).slice(0,5);
+ const Chip=(t,on,f)=>h("button",{className:"chip"+(on?" on":""),onClick:f},t);
+ return h("div",{className:"app"},
+  h("aside",{className:"side"},
+   h("div",{className:"hd"},h("div",{className:"logo"},"P"),h("div",null,h("b",null,"Parkly"),h("small",null,"Smart parking · Tashkent")),h("button",{className:"ic","aria-label":"Toggle light or dark mode",onClick:()=>setTheme(theme==="dark"?"light":"dark")},theme==="dark"?"☀️":"🌙")),
+   h("div",{className:"warn"},"Demo prototype: every status here is ",h("b",null,"simulated"),". No real cameras or sensors are connected yet."),
+   h("div",{className:"st"},[["Total",tot,""],["Available",cf,COL.free],["Occupied",co,COL.occupied],["Available %",pc+"%",""]].map(x=>h("div",{className:"sc",key:x[0]},h("b",{style:{color:x[2]||"inherit"}},x[1]),h("small",null,x[0])))),
+   h("div",{className:"pb"},h("i",{style:{width:cf/tot*100+"%",background:COL.free}}),h("i",{style:{width:cu/tot*100+"%",background:COL.unconfirmed}}),h("i",{style:{width:co/tot*100+"%",background:COL.occupied}})),
+   h("div",{className:"src"},h("span",null,"Sensor/camera: "+bySrc("sensor")),h("span",null,"User reports: "+bySrc("user")),h("span",null,"Simulated: "+bySrc("sim")),h("span",null,"Unconfirmed: "+cu)),
+   h("input",{value:q,onChange:e=>setQ(e.target.value),placeholder:"Search street, mall, university, restaurant…","aria-label":"Search"}),
+   h("div",{className:"row"},Chip("Only available",av,()=>setAv(!av)),Chip("All",price==="all",()=>setPrice("all")),Chip("Free",price==="free",()=>setPrice("free")),Chip("Paid",price==="paid",()=>setPrice("paid")),Chip("Closest first",cl,()=>setCl(!cl))),
+   h("div",{className:"row"},h("button",{className:"btn",onClick:locate},"📍 Near me"),h("button",{className:"btn p",onClick:nearest},"⚡ Nearest free spot")),
+   msg&&h("div",{className:"msg",role:"status"},msg),
+   S&&h("div",{className:"card",key:S.id},h("h3",null,LOT[S.lot].name+" · Spot #"+S.n),h("span",{className:"pill "+S.st},LBL[S.st]),
+    h("div",{className:"kv"},h("span",null,"Updated"),h("span",null,ago(S.updated,now)),h("span",null,"Distance"),h("span",null,fd(S.d)+(pos.demo?" (from demo location)":"")),h("span",null,"Parking"),h("span",null,LOT[S.lot].isFree?"Free":"Paid"),h("span",null,"Source"),h("span",null,srcLbl(S))),
+    h(LotView,{lot:LOT[S.lot],spots:E.filter(x=>x.lot===S.lot),sel:S.id,onPick:setSel}),h("div",{className:"foot"},"★ marks the spot you selected. This is a plan drawn from current statuses, not a camera image."),pk?h("div",null,h("img",{className:"pic",src:photos[pk],alt:"Photo of the parking area"}),h("div",{className:"foot"},pk===S.id?"Driver photo of this spot":"Driver photo of this area (spot #"+pk.split("-")[1]+")")):h("div",{className:"foot"},"No photo of this place yet."),h("label",{className:"btn",style:{display:"inline-block",margin:"6px 0"}},"📷 Add photo",h("input",{type:"file",accept:"image/*",hidden:true,onChange:e=>{addPhoto(S.id,e.target.files[0]);e.target.value=""}})),h("div",{className:"row"},h("a",{className:"btn p",target:"_blank",rel:"noopener",href:"https://www.google.com/maps/dir/?api=1&destination="+S.lat+","+S.lng+"&travelmode=driving"},"🧭 Directions in Google Maps"),h("a",{className:"btn",target:"_blank",rel:"noopener",href:"https://www.google.com/maps/search/?api=1&query="+S.lat+","+S.lng},"📍 Open spot")),h("div",{className:"row"},h("button",{className:"btn g",onClick:()=>report(S.id,"free")},"Report available"),h("button",{className:"btn r",onClick:()=>report(S.id,"occupied")},"Report occupied"),h("button",{className:"btn",onClick:()=>confirm(S)},"Confirm status"),
+     S.source==="user"&&S.conf<2&&h("button",{className:"btn",onClick:()=>other(S)},"Demo: 2nd driver confirms"))),
+   h("h4",null,lots.length+" parking locations"),
+   lots.map(l=>h("div",{className:"li",key:l.id,onClick:()=>pickLot(l)},h("div",null,h("b",null,l.name,h("span",{className:"tag"},l.isFree?"Free":"Paid")),h("small",null,fd(l.d)+" · "+l.cat)),h("a",{className:"tag",target:"_blank",rel:"noopener",title:"Open directions in Google Maps",href:"https://www.google.com/maps/dir/?api=1&destination="+l.lat+","+l.lng+"&travelmode=driving",onClick:e=>e.stopPropagation()},"🧭 Directions"),h("span",{className:"cnt",style:{color:l.nf?COL.free:COL.occupied}},l.nf+"/"+l.n))),
+   !lots.length&&h("div",{className:"foot"},"No locations match your search and filters."),
+   h("h4",null,"Recently updated"),
+   recent.map(s=>h("div",{className:"rc",key:s.id},h("span",{className:"dot",style:{background:COL[s.st]}}),h("span",null,LOT[s.lot].name+" #"+s.n),h("span",null,ago(s.updated,now)))),
+   h("div",{className:"foot"},"Locations are approximate. Statuses are simulated or user-reported. Real sensor and AI camera feeds can be connected later through the ingest function in the code.")),
+  h(MapView,{lots,spots:vs,sel,focus,pos,onSpot:id=>{setSel(id);const s=E.find(x=>x.id===id);if(s)goMaps(s)},onLot:pickLot}));
+}
+ReactDOM.createRoot(document.getElementById("root")).render(h(App));
+</script></body></html>
